@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0.2
+    container_name: mongodb
+    restart: unless-stopped
+    volumes:
+      - db:/data/db
+    networks:
+      - backend
+
+  backend:
+    container_name: backend
+    depends_on:
+      - mongodb
+    build: ./backend
+    restart: unless-stopped
+    # ports:
+    #   - 4000:4000
+    environment:
+      - MONGOOSE_URI=mongodb://mongodb:27017/merndatabase
+    networks:
+      - backend
+      - frontend
+
+  frontend:
+    container_name: frontend
+    depends_on:
+      - backend
+    build: ./frontend
+    ports:
+      - 80:80
+    networks:
+      - frontend
+
+volumes:
+  db:
+
+networks:
+  backend:
+  frontend:
+    
+      
+      
